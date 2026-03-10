@@ -1,0 +1,47 @@
+{
+  "nome": "Futvôlei",
+
+  "eventos": {
+
+    "Saque": {
+      "Ace": "ponto_proprio",
+      "Certo": "continua",
+      "Erro": "ponto_adversario"
+    },
+
+    "Ataque": {
+
+      "campos": {
+        "parte_corpo": [
+          "Cabeça",
+          "Ombro",
+          "Peito",
+          "Pé Direito",
+          "Pé Esquerdo",
+          "Shark",
+          "Outro"
+        ]
+      },
+
+      "Ponto": "ponto_proprio",
+      "Defendida": "continua",
+      "Erro": "ponto_adversario"
+    }
+
+  },
+
+  "zonas": [
+    ["Frente Esq.", "Frente Meio", "Frente Dir."],
+    ["Meio Esq.", "Meio Meio", "Meio Dir."],
+    ["Fundo Esq.", "Fundo Meio", "Fundo Dir."]
+  ],
+
+  "zonas_extras": [
+    "Fora Esq.",
+    "Fora Fundo",
+    "Fora Dir.",
+    "Rede"
+  ],
+
+  "jogadores_por_equipe": 2
+}
