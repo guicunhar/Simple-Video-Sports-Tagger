@@ -250,9 +250,11 @@ class TelaTagger:
                 btn.grid(row=i, column=j, padx=3, pady=3)
 
         linha_base = len(self.zonas)
+        colunas = len(self.zonas[0])
 
         for i, zona in enumerate(self.zonas_extras):
-
+            row = linha_base + (i // colunas)
+            col = i % colunas
             btn = tk.Button(
                 frame,
                 text=zona,
@@ -262,7 +264,7 @@ class TelaTagger:
                 command=lambda z=zona: func(z)
             )
 
-            btn.grid(row=linha_base, column=i, padx=3, pady=3)
+            btn.grid(row=row, column=col, padx=3, pady=3)
 
     # -----------------
 
