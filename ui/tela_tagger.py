@@ -37,23 +37,43 @@ class TelaTagger:
 
         self.atualizar_placar()
 
-        # -----------------
+                # -----------------
         # JOGADORES
         # -----------------
 
-        frame_jog = tk.LabelFrame(self.frame, text="Jogador")
-        frame_jog.pack(pady=5)
+        frame_times = tk.Frame(self.frame)
+        frame_times.pack(pady=5)
 
-        for j in partida.jogadores:
+        # TIME 1
+        frame_time1 = tk.LabelFrame(frame_times, text=partida.equipe1)
+        frame_time1.grid(row=0, column=0, padx=20)
+
+        for j in partida.jogadores_time1:
 
             btn = tk.Button(
-                frame_jog,
+                frame_time1,
                 text=j,
-                width=20,
-                command=lambda x=j: self.selecionar_jogador(x)
+                width=12,
+                command=lambda x=j: self.selecionar_jogador(x, self.partida.equipe1)
             )
 
-            btn.pack(side="left", padx=5)
+            btn.pack(padx=4, pady=4)
+
+
+        # TIME 2
+        frame_time2 = tk.LabelFrame(frame_times, text=partida.equipe2)
+        frame_time2.grid(row=0, column=1, padx=20)
+
+        for j in partida.jogadores_time2:
+
+            btn = tk.Button(
+                frame_time2,
+                text=j,
+                width=12,
+                command=lambda x=j: self.selecionar_jogador(x, self.partida.equipe2)
+            )
+
+            btn.pack(padx=4, pady=4)
 
         # -----------------
         # EVENTOS
@@ -130,15 +150,12 @@ class TelaTagger:
         )
 
     # -----------------
-
-    def selecionar_jogador(self, jogador_sel):
-
-        jogador, equipe = jogador_sel.split(" - ")
+    def selecionar_jogador(self, jogador, equipe):
 
         self.jogador = jogador
         self.equipe = equipe
 
-        self.status["text"] = f"Jogador: {jogador}"
+        self.status["text"] = f"Jogador: {jogador} ({equipe})"
 
     # -----------------
 
@@ -303,3 +320,8 @@ class TelaTagger:
 
         self.zona_propria = None
         self.zona_adv = None
+        self.zona_propria = None
+        self.zona_adv = None
+        self.tipo = None
+        self.subtipo = None
+        self.parte_corpo = None

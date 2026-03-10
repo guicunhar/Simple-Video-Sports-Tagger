@@ -49,14 +49,17 @@ class TelaConfig:
         equipe1 = self.equipe1.get()
         equipe2 = self.equipe2.get()
 
-        jogadores = [
-            f"{self.j1.get()} - {equipe1}",
-            f"{self.j2.get()} - {equipe1}",
-            f"{self.j3.get()} - {equipe2}",
-            f"{self.j4.get()} - {equipe2}",
+        jogadores_time1 = [
+            f"{self.j1.get()}",
+            f"{self.j2.get()}"
+        ]
+        
+        jogadores_time2 = [
+            f"{self.j3.get()}",
+            f"{self.j4.get()}"
         ]
 
-        partida = Partida(equipe1, equipe2, jogadores)
+        partida = Partida(equipe1, equipe2, jogadores_time1, jogadores_time2)
 
         self.frame.destroy()
 
