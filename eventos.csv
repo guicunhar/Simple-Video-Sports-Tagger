@@ -1,0 +1,5 @@
+id,jogador,equipe,tipo,subtipo,parte_corpo,zona_propria,zona_adversaria,placar1,placar2
+1,chau,chau dudu,Ataque,Ponto,Pé Direito,Rede,Frente Meio,1,0
+2,chau,chau dudu,Ataque,Defendida,Pé Direito,Frente Dir.,Frente Meio,1,0
+3,chau,chau dudu,Ataque,Erro,Pé Direito,Frente Dir.,Frente Esq.,1,1
+4,chau,chau dudu,Ataque,Erro,Peito,Frente Meio,Frente Meio,1,2
