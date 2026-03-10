@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
 from core.eventos import salvar_evento
 
 
@@ -15,61 +14,82 @@ class TelaTagger:
         self.zonas = esporte["zonas"]
         self.zonas_extras = esporte["zonas_extras"]
 
+        self.jogador = None
+        self.equipe = None
+        self.tipo = None
+        self.subtipo = None
+        self.parte_corpo = None
+
         self.zona_propria = None
         self.zona_adv = None
 
         self.frame = tk.Frame(root)
         self.frame.pack()
 
-        # ENTER registra jogada
         root.bind("<Return>", lambda e: self.registrar())
 
-        # ---------------------
+        # -----------------
         # PLACAR
-        # ---------------------
+        # -----------------
 
         self.placar = tk.Label(self.frame, font=("Arial", 20))
         self.placar.pack(pady=10)
 
         self.atualizar_placar()
 
-        # ---------------------
-        # CONTROLES
-        # ---------------------
+        # -----------------
+        # JOGADORES
+        # -----------------
 
-        top = tk.Frame(self.frame)
-        top.pack(pady=10)
+        frame_jog = tk.LabelFrame(self.frame, text="Jogador")
+        frame_jog.pack(pady=5)
 
-        # jogador
-        tk.Label(top, text="Jogador").grid(row=0, column=0)
+        for j in partida.jogadores:
 
-        self.jogador = ttk.Combobox(top, state="readonly")
-        self.jogador["values"] = partida.jogadores
-        self.jogador.grid(row=1, column=0)
+            btn = tk.Button(
+                frame_jog,
+                text=j,
+                width=20,
+                command=lambda x=j: self.selecionar_jogador(x)
+            )
 
-        # tipo principal
-        tk.Label(top, text="Evento").grid(row=0, column=1)
+            btn.pack(side="left", padx=5)
 
-        self.tipo = ttk.Combobox(top, state="readonly")
-        self.tipo["values"] = list(self.eventos.keys())
-        self.tipo.grid(row=1, column=1)
+        # -----------------
+        # EVENTOS
+        # -----------------
 
-        self.tipo.bind("<<ComboboxSelected>>", self.atualizar_subtipos)
+        self.frame_eventos = tk.LabelFrame(self.frame, text="Evento")
+        self.frame_eventos.pack(pady=5)
 
-        # subtipo
-        tk.Label(top, text="Resultado").grid(row=0, column=2)
+        for ev in self.eventos.keys():
 
-        self.subtipo = ttk.Combobox(top, state="readonly")
-        self.subtipo.grid(row=1, column=2)
+            btn = tk.Button(
+                self.frame_eventos,
+                text=ev,
+                width=15,
+                command=lambda x=ev: self.selecionar_evento(x)
+            )
 
-        tk.Label(top, text="Parte do Corpo").grid(row=0, column=3)
+            btn.pack(side="left", padx=5)
 
-        self.parte_corpo = ttk.Combobox(top, state="readonly")
-        self.parte_corpo.grid(row=1, column=3)
+        # -----------------
+        # RESULTADO
+        # -----------------
 
-        # ---------------------
+        self.frame_resultado = tk.LabelFrame(self.frame, text="Resultado")
+        self.frame_resultado.pack(pady=5)
+
+        # -----------------
+        # PARTE DO CORPO
+        # -----------------
+
+        self.frame_corpo = tk.LabelFrame(self.frame, text="Parte do Corpo")
+        self.frame_corpo.pack(pady=5)
+
+        # -----------------
         # ZONAS
-        # ---------------------
+        # -----------------
 
         quadras = tk.Frame(self.frame)
         quadras.pack(pady=10)
@@ -83,9 +103,9 @@ class TelaTagger:
         self.criar_grid(self.frame_propria, self.selecionar_propria)
         self.criar_grid(self.frame_adv, self.selecionar_adv)
 
-        # ---------------------
+        # -----------------
         # BOTÃO REGISTRAR
-        # ---------------------
+        # -----------------
 
         self.botao = tk.Button(
             self.frame,
@@ -97,12 +117,10 @@ class TelaTagger:
 
         self.botao.pack(pady=10)
 
-        # status
-
         self.status = tk.Label(self.frame, text="")
         self.status.pack()
 
-    # ---------------------
+    # -----------------
 
     def atualizar_placar(self):
 
@@ -111,53 +129,92 @@ class TelaTagger:
             f"{self.partida.placar2} {self.partida.equipe2}"
         )
 
-    # ---------------------
+    # -----------------
 
-    def atualizar_subtipos(self, event=None):
+    def selecionar_jogador(self, jogador_sel):
 
-        tipo = self.tipo.get()
+        jogador, equipe = jogador_sel.split(" - ")
 
-        evento = self.eventos[tipo]
+        self.jogador = jogador
+        self.equipe = equipe
 
-        subtipos = []
+        self.status["text"] = f"Jogador: {jogador}"
 
-        for k, v in evento.items():
-            if k != "campos":
-                subtipos.append(k)
+    # -----------------
 
-        self.subtipo["values"] = subtipos
+    def selecionar_evento(self, evento):
 
-        if subtipos:
-            self.subtipo.current(0)
+        self.tipo = evento
+        self.subtipo = None
+
+        for w in self.frame_resultado.winfo_children():
+            w.destroy()
+
+        evento_dict = self.eventos[evento]
+
+        for k in evento_dict:
+
+            if k == "campos":
+                continue
+
+            btn = tk.Button(
+                self.frame_resultado,
+                text=k,
+                width=12,
+                command=lambda x=k: self.selecionar_subtipo(x)
+            )
+
+            btn.pack(side="left", padx=4)
 
         # campos extras
 
-        if "campos" in evento and "parte_corpo" in evento["campos"]:
+        for w in self.frame_corpo.winfo_children():
+            w.destroy()
 
-            self.parte_corpo["values"] = evento["campos"]["parte_corpo"]
-            self.parte_corpo.current(0)
+        if "campos" in evento_dict:
 
-        else:
-            self.parte_corpo.set("")
-            self.parte_corpo["values"] = []
+            if "parte_corpo" in evento_dict["campos"]:
 
-    # ---------------------
+                for p in evento_dict["campos"]["parte_corpo"]:
+
+                    btn = tk.Button(
+                        self.frame_corpo,
+                        text=p,
+                        width=12,
+                        command=lambda x=p: self.selecionar_corpo(x)
+                    )
+
+                    btn.pack(side="left", padx=4)
+
+    # -----------------
+
+    def selecionar_subtipo(self, subtipo):
+
+        self.subtipo = subtipo
+        self.status["text"] = f"{self.tipo} - {subtipo}"
+
+    # -----------------
+
+    def selecionar_corpo(self, corpo):
+
+        self.parte_corpo = corpo
+        self.status["text"] = f"{self.tipo} {self.subtipo} ({corpo})"
+
+    # -----------------
 
     def selecionar_propria(self, zona):
 
         self.zona_propria = zona
-
         self.status["text"] = f"Quadra própria: {zona}"
 
-    # ---------------------
+    # -----------------
 
     def selecionar_adv(self, zona):
 
         self.zona_adv = zona
-
         self.status["text"] = f"Quadra adversária: {zona}"
 
-    # ---------------------
+    # -----------------
 
     def criar_grid(self, frame, func):
 
@@ -190,48 +247,40 @@ class TelaTagger:
 
             btn.grid(row=linha_base, column=i, padx=3, pady=3)
 
-    # ---------------------
+    # -----------------
 
     def registrar(self):
 
-        if not self.jogador.get():
+        if not self.jogador:
             self.status["text"] = "Selecione jogador"
             return
 
-        if not self.tipo.get():
+        if not self.tipo:
             self.status["text"] = "Selecione evento"
             return
 
-        if not self.subtipo.get():
+        if not self.subtipo:
             self.status["text"] = "Selecione resultado"
             return
 
         if not self.zona_propria or not self.zona_adv:
-            self.status["text"] = "Selecione as duas zonas"
+            self.status["text"] = "Selecione zonas"
             return
 
-        jogador_sel = self.jogador.get()
+        regra = self.eventos[self.tipo][self.subtipo]
 
-        jogador, equipe = jogador_sel.split(" - ")
-
-        tipo = self.tipo.get()
-        subtipo = self.subtipo.get()
-        parte_corpo = self.parte_corpo.get()
-
-        regra = self.eventos[tipo][subtipo]
-
-        # aplicar pontuação
+        # pontuação
 
         if regra == "ponto_proprio":
 
-            if equipe == self.partida.equipe1:
+            if self.equipe == self.partida.equipe1:
                 self.partida.placar1 += 1
             else:
                 self.partida.placar2 += 1
 
         elif regra == "ponto_adversario":
 
-            if equipe == self.partida.equipe1:
+            if self.equipe == self.partida.equipe1:
                 self.partida.placar2 += 1
             else:
                 self.partida.placar1 += 1
@@ -239,20 +288,18 @@ class TelaTagger:
         self.atualizar_placar()
 
         salvar_evento(
-            jogador,
-            equipe,
-            tipo,
-            subtipo,
-            parte_corpo,
+            self.jogador,
+            self.equipe,
+            self.tipo,
+            self.subtipo,
+            self.parte_corpo,
             self.zona_propria,
             self.zona_adv,
             self.partida.placar1,
             self.partida.placar2
         )
 
-        self.status["text"] = f"{jogador} | {tipo} - {subtipo}"
-
-        # reset zonas
+        self.status["text"] = f"{self.jogador} | {self.tipo} {self.subtipo}"
 
         self.zona_propria = None
         self.zona_adv = None
